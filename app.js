@@ -11,6 +11,7 @@ var HS = 0;
 var LIFESPAN = null;
 var SCOREBOARD = null;
 var HIGHSCORE = null;
+var RULES = [];
 
 const COOR = {
   '80_120': [80, 120],
@@ -46,6 +47,9 @@ function displayKaiAds() {
     onerror: err => console.error(err),
     onready: ad => {
       ad.call('display')
+      //ad.on('click', () => console.log('click event'))
+      //ad.on('close', () => console.log('close event'))
+      //ad.on('display', () => console.log('display event')
       setTimeout(() => {
         document.body.style.position = '';
       }, 1000);
@@ -120,6 +124,9 @@ function spawnBlock(dir = []) {
 function newGame() {
   if (START || !READY)
     return
+  RULES.forEach((r) => {
+    me.game.world.removeChild(r);
+  });
   START = true;
   BOX = me.game.world.addChild(me.pool.pull("box", 80, 180, "#FFF", BOX_DIM, BOX_DIM, "BOX"))
   COIN = spawnCoin(140, 120)
@@ -169,22 +176,20 @@ game.PlayScreen = me.Stage.extend({
     me.input.bindKey(me.input.KEY.DOWN, "down");
     me.input.bindKey(me.input.KEY.SPACE, "space");
     me.input.bindKey(me.input.KEY.ENTER, "enter");
-    me.game.world.addChild(me.pool.pull("box", 70, 115, 'white', 5, 90))
-    me.game.world.addChild(me.pool.pull("box", 166, 115, 'white', 5, 90))
-    me.game.world.addChild(me.pool.pull("box", 70, 111, 'white', 101, 5))
-    me.game.world.addChild(me.pool.pull("box", 70, 205, 'white', 101, 5))
+    me.game.world.addChild(me.pool.pull("box", 70, 111, 'white', 2, 98))
+    me.game.world.addChild(me.pool.pull("box", 169, 111, 'white', 2, 98))
+    me.game.world.addChild(me.pool.pull("box", 70, 109, 'white', 101, 2))
+    me.game.world.addChild(me.pool.pull("box", 70, 209, 'white', 101, 2))
     updateScoreboard(SCORE);
-    me.game.world.addChild(new me.Text(10, 22, {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Rules:`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 1), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `1) Use the nav-pad to move White box`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 2), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `toward the Red box`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 3), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `2) If the Red box is not taken in  2 sec,`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 4), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `the position will change`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 5), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `3) Avoid Black box or your current score`}));
-    me.game.world.addChild(new me.Text(10, 22 + (12 * 6), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `will reset to 0 & -1 on next collision`}));
-    
-    me.game.world.addChild(new me.Text(10, 220, {font: "Open Sans", size: 15, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Press Enter to Start`}));
-    
-    me.game.world.addChild(new me.Text(10, 240, {font: "Open Sans", size: 15, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Press End Call to Exit`}));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22, {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Rules:`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 1), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `1) Use the nav-pad to move White box`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 2), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `toward the Red box`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 3), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `2) If the Red box is not taken in  2 sec,`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 4), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `the position will change`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 5), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `3) Avoid Black box or your current score`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 22 + (12 * 6), {font: "Open Sans", size: 12, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `will reset to 0 & -1 on next collision`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 220, {font: "Open Sans", size: 15, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Press 'Enter' to Start`})));
+    RULES.push(me.game.world.addChild(new me.Text(10, 240, {font: "Open Sans", size: 15, fillStyle: "#ffffff", strokeStyle: "#000000", lineWidth: 12, text: `Press 'End Call' to Exit`})));
   },
   onDestroyEvent: function() {
     me.input.unbindKey(me.input.KEY.LEFT);
