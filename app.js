@@ -110,21 +110,21 @@ function spawnBlock(dir = []) {
   var x, y;
   const random = dir[Math.floor(Math.random() * 2)];
   if (['top', 'bottom'].indexOf(random) > -1) {
+    if (!X_BLOCK)
+      spawnBlock(['left', 'right'])
     if (random === 'top')
       y = 0, x = [80, 110,140][Math.floor(Math.random() * 3)];
     else
       y = 320, x = [80, 110,140][Math.floor(Math.random() * 3)];
     Y_BLOCK = true;
-    if (!X_BLOCK)
-      spawnBlock(['left', 'right'])
   } else {
+    if (!Y_BLOCK)
+      spawnBlock(['top', 'bottom'])
     if (random === 'left')
       x = 0, y = [120, 150,180][Math.floor(Math.random() * 3)];
     else
       x = 240, y = [120, 150,180][Math.floor(Math.random() * 3)];
     X_BLOCK = true;
-    if (!Y_BLOCK)
-      spawnBlock(['top', 'bottom'])
   }
   me.game.world.moveToTop(me.game.world.addChild(me.pool.pull("box", x, y, "#000", BOX_DIM, BOX_DIM, random)))
 }
@@ -273,7 +273,7 @@ game.Box = me.Entity.extend({
     } else if (['top', 'right', 'bottom', 'left'].indexOf(this.__TYPE__) > -1 && !this.__EXPIRED__) {
       var removed = false
       if (this.__TYPE__ === 'top') {
-        this.pos.y += (this.vel + 25) * time / 1000;
+        this.pos.y += (this.vel + 30) * time / 1000;
         if (this.pos.y >= 320) {
           this.__EXPIRED__ = true
           me.game.world.removeChild(this)
@@ -289,7 +289,7 @@ game.Box = me.Entity.extend({
           removed = true
         }
       } else if (this.__TYPE__ === 'bottom') {
-        this.pos.y -= (this.vel + 25) * time / 1000;
+        this.pos.y -= (this.vel + 30) * time / 1000;
         if (this.pos.y <= 0) {
           this.__EXPIRED__ = true
           me.game.world.removeChild(this)
