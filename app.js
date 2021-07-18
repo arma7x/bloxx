@@ -12,6 +12,8 @@ var LIFESPAN = null;
 var SCOREBOARD = null;
 var HIGHSCORE = null;
 var RULES = [];
+var X_BLOCK = false;
+var Y_BLOCK = false;
 
 const COOR = {
   '80_120': [80, 120],
@@ -112,11 +114,17 @@ function spawnBlock(dir = []) {
       y = 0, x = [80, 110,140][Math.floor(Math.random() * 3)];
     else
       y = 320, x = [80, 110,140][Math.floor(Math.random() * 3)];
+    Y_BLOCK = true;
+    if (!X_BLOCK)
+      spawnBlock(['left', 'right'])
   } else {
     if (random === 'left')
       x = 0, y = [120, 150,180][Math.floor(Math.random() * 3)];
     else
       x = 240, y = [120, 150,180][Math.floor(Math.random() * 3)];
+    X_BLOCK = true;
+    if (!Y_BLOCK)
+      spawnBlock(['top', 'bottom'])
   }
   me.game.world.moveToTop(me.game.world.addChild(me.pool.pull("box", x, y, "#000", BOX_DIM, BOX_DIM, random)))
 }
@@ -130,8 +138,6 @@ function newGame() {
   START = true;
   BOX = me.game.world.addChild(me.pool.pull("box", 80, 180, "#FFF", BOX_DIM, BOX_DIM, "BOX"))
   COIN = spawnCoin(140, 120)
-  spawnBlock(['left', 'right'])
-  spawnBlock(['top', 'bottom'])
 }
 
 var game = {
@@ -246,6 +252,14 @@ game.Box = me.Entity.extend({
   },
   update: function(time) {
     this._super(me.Entity, "update", [time]);
+
+    if (READY && !X_BLOCK && !Y_BLOCK && COIN && BOX) {
+      X_BLOCK = true;
+      Y_BLOCK = true;
+      spawnBlock(['top', 'bottom'])
+      spawnBlock(['left', 'right'])
+    }
+
     if (COIN && BOX && this.__TYPE__ === 'BOX') {
       if (this.overlaps(COIN)) {
         me.audio.play("gun", false, null, 1);
@@ -301,10 +315,13 @@ game.Box = me.Entity.extend({
             SCORE = 0
           updateScoreboard(SCORE);
           me.audio.play("collide", false, null, 1);
-          if (['left', 'right'].indexOf(this.__TYPE__) > -1)
-            spawnBlock(['left', 'right'])
-          else
-            spawnBlock(['top', 'bottom'])
+          if (['left', 'right'].indexOf(this.__TYPE__) > -1) {
+            X_BLOCK = false
+            //spawnBlock(['left', 'right'])
+          }  else {
+            Y_BLOCK = false
+            //spawnBlock(['top', 'bottom'])
+          }
         }
       }
     }
